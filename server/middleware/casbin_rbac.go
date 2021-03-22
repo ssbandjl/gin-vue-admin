@@ -6,6 +6,7 @@ import (
 	"gin-vue-admin/model/response"
 	"gin-vue-admin/service"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 // 拦截器
@@ -20,6 +21,7 @@ func CasbinHandler() gin.HandlerFunc {
 		// 获取用户的角色
 		sub := waitUse.AuthorityId
 		e := service.Casbin()
+		log.Printf("middleware.CasbinHandler, obj:%s, act:%s, sub:%s", obj, act, sub)
 		// 判断策略中是否存在
 		success, _ := e.Enforce(sub, obj, act)
 		if global.GVA_CONFIG.System.Env == "develop" || success {

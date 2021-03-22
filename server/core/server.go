@@ -13,6 +13,7 @@ type server interface {
 }
 
 func RunWindowsServer() {
+	// 多点登录
 	if global.GVA_CONFIG.System.UseMultipoint {
 		// 初始化redis服务
 		initialize.Redis()
