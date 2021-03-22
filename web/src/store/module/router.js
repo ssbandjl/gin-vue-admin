@@ -41,7 +41,7 @@ export const router = {
                 },
                 children: []
             }]
-            const asyncRouterRes = await asyncMenu()
+            const asyncRouterRes = await asyncMenu()  //异步获取菜单 /menu/getMenu
             if(asyncRouterRes.code !=0){
                 return
             }

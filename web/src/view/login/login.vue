@@ -122,17 +122,19 @@ export default {
     };
   },
   created() {
-    this.loginVefify();
+    this.loginVefify();  // 图形验证码
     this.curYear = new Date().getFullYear();
-    // alert(this.curYear)
   },
   methods: {
-    ...mapActions("user", ["LoginIn"]),
+    ...mapActions("user", ["LoginIn"]), // 参数解构
     async login() {
+      // console.log("loginForm:", this.loginForm)
       return await this.LoginIn(this.loginForm);
     },
+    // 点击登录触发
     async submitForm() {
       this.$refs.loginForm.validate(async (v) => {
+        // 验证通过
         if (v) {
           const flag = await this.login();
           if (!flag) {

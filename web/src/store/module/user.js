@@ -42,6 +42,7 @@ export const user = {
         }
     },
     // https://vuex.vuejs.org/zh/guide/actions.html
+    // https://vuex.vuejs.org/zh/guide/modules.html 模块
     actions: {
         async LoginIn({ commit, dispatch, rootGetters, getters }, loginInfo) {
             // console.log("loginInfo:", loginInfo)
@@ -49,7 +50,7 @@ export const user = {
             if (res.code == 0) {
                 commit('setUserInfo', res.data.user)
                 commit('setToken', res.data.token)
-                await dispatch('router/SetAsyncRouter', {}, { root: true }) //从后台获取动态路由
+                await dispatch('router/SetAsyncRouter', {}, { root: true }) //从后台获取动态路由, 需要在全局命名空间内分发 action 或提交 mutation，将 { root: true } 作为第三参数传给 dispatch 或 commit 即可
                 const asyncRouters = rootGetters['router/asyncRouters']
                 console.log("asyncRouterRes:", asyncRouters)
                 router.addRoutes(asyncRouters)
