@@ -41,21 +41,24 @@ export const user = {
             }
         }
     },
+    // https://vuex.vuejs.org/zh/guide/actions.html
     actions: {
         async LoginIn({ commit, dispatch, rootGetters, getters }, loginInfo) {
+            // console.log("loginInfo:", loginInfo)
             const res = await login(loginInfo)
             if (res.code == 0) {
                 commit('setUserInfo', res.data.user)
                 commit('setToken', res.data.token)
-                await dispatch('router/SetAsyncRouter', {}, { root: true })
+                await dispatch('router/SetAsyncRouter', {}, { root: true }) //从后台获取动态路由
                 const asyncRouters = rootGetters['router/asyncRouters']
+                console.log("asyncRouterRes:", asyncRouters)
                 router.addRoutes(asyncRouters)
                 // const redirect = router.history.current.query.redirect
                 // console.log(redirect)
                 // if (redirect) {
                 //     router.push({ path: redirect })
                 // } else {
-                    router.push({ name: getters["userInfo"].authority.defaultRouter })
+                    router.push({ name: getters["userInfo"].authority.defaultRouter })  // dashboard
                 // }
                 return true
             }

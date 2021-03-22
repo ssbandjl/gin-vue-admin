@@ -124,6 +124,7 @@ export default {
   created() {
     this.loginVefify();
     this.curYear = new Date().getFullYear();
+    // alert(this.curYear)
   },
   methods: {
     ...mapActions("user", ["LoginIn"]),

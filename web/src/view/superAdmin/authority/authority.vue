@@ -68,7 +68,7 @@
         <el-button @click="enterDialog" type="primary">确 定</el-button>
       </div>
     </el-dialog>
-
+    <!-- 设置权限右侧弹窗 -->
     <el-drawer :visible.sync="drawer" :with-header="false" size="40%" title="角色配置" v-if="drawer">
       <el-tabs :before-leave="autoEnter" class="role-box" type="border-card">
         <el-tab-pane label="角色菜单">
