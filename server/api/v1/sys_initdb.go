@@ -28,6 +28,7 @@ func InitDB(c *gin.Context) {
 		response.FailWithMessage("参数校验不通过", c)
 		return
 	}
+	// 初始化数据库
 	if err := service.InitDB(dbInfo); err != nil {
 		global.GVA_LOG.Error("自动创建数据库失败", zap.Any("err", err))
 		response.FailWithMessage("自动创建数据库失败，请查看后台日志", c)

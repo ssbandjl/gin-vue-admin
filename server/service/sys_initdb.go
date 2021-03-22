@@ -90,6 +90,7 @@ func InitDB(conf request.InitDB) error {
 		"mysql.password": conf.Password,
 		"mysql.config":   "charset=utf8mb4&parseTime=True&loc=Local",
 	}
+	// 通过viper接口, 将前端初始化的配置写入配置文件config.yaml
 	if err := writeConfig(global.GVA_VP, setting); err != nil {
 		return err
 	}
