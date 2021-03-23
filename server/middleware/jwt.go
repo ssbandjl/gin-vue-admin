@@ -23,6 +23,7 @@ func JWTAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		// token黑名单
 		if service.IsBlacklist(token) {
 			response.FailWithDetailed(gin.H{"reload": true}, "您的帐户异地登陆或令牌失效", c)
 			c.Abort()
@@ -41,11 +42,13 @@ func JWTAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		// 如果用户UUID不在数据库中, 则将该token加入黑名单
 		if err, _ = service.FindUserByUuid(claims.UUID.String()); err != nil {
 			_ = service.JsonInBlacklist(model.JwtBlacklist{Jwt: token})
 			response.FailWithDetailed(gin.H{"reload": true}, err.Error(), c)
 			c.Abort()
 		}
+		// 如果token即将过期, 则主动刷新token
 		if claims.ExpiresAt-time.Now().Unix() < claims.BufferTime {
 			claims.ExpiresAt = time.Now().Unix() + global.GVA_CONFIG.JWT.ExpiresTime
 			newToken, _ := j.CreateToken(*claims)
@@ -59,10 +62,11 @@ func JWTAuth() gin.HandlerFunc {
 				} else { // 当之前的取成功时才进行拉黑操作
 					_ = service.JsonInBlacklist(model.JwtBlacklist{Jwt: RedisJwtToken})
 				}
-				// 无论如何都要记录当前的活跃状态
+				// 无论如何都要记录当前的活跃状态, 刷新token到redis
 				_ = service.SetRedisJWT(newToken, newClaims.Username)
 			}
 		}
+		// 设置jwt的声明claims
 		c.Set("claims", claims)
 		c.Next()
 	}
@@ -93,6 +97,7 @@ func (j *JWT) CreateToken(claims request.CustomClaims) (string, error) {
 
 // 解析 token
 func (j *JWT) ParseToken(tokenString string) (*request.CustomClaims, error) {
+	// 第三个参数是一个回调函数, 第二个参数&request.CustomClaims{} 间接实现了Claims接口
 	token, err := jwt.ParseWithClaims(tokenString, &request.CustomClaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return j.SigningKey, nil
 	})
@@ -110,6 +115,7 @@ func (j *JWT) ParseToken(tokenString string) (*request.CustomClaims, error) {
 			}
 		}
 	}
+	// token有值, 则进行接口断言
 	if token != nil {
 		if claims, ok := token.Claims.(*request.CustomClaims); ok && token.Valid {
 			return claims, nil

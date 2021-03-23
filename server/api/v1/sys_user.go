@@ -13,6 +13,7 @@ import (
 	"github.com/go-redis/redis"
 	"go.uber.org/zap"
 	"time"
+	"log"
 )
 
 // @Tags Base
@@ -280,6 +281,8 @@ func getUserAuthorityId(c *gin.Context) string {
 		global.GVA_LOG.Error("从Gin的Context中获取从jwt解析出来的用户UUID失败, 请检查路由是否使用jwt中间件")
 		return ""
 	} else {
+		log.Printf("claims:%v", claims)
+		// claims:&{77bed061-0bbd-4303-ae8c-1da79a6867d1 1 admin 超级管理员 888 86400 { 1617027228  0 qmPlus 1616421428 }}
 		waitUse := claims.(*request.CustomClaims)
 		return waitUse.AuthorityId
 	}

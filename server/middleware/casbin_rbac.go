@@ -6,7 +6,6 @@ import (
 	"gin-vue-admin/model/response"
 	"gin-vue-admin/service"
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
 // 拦截器
@@ -20,9 +19,11 @@ func CasbinHandler() gin.HandlerFunc {
 		act := c.Request.Method
 		// 获取用户的角色
 		sub := waitUse.AuthorityId
-		e := service.Casbin()
-		log.Printf("middleware.CasbinHandler, obj:%s, act:%s, sub:%s", obj, act, sub)
+		e := service.Casbin() //与数据库连接, 得到Enforcer实施者
+		//log.Printf("middleware.CasbinHandler, 访问的对象obj:%s, 访问的方法act:%s, 当前用户角色标识sub:%s", obj, act, sub)
 		// 判断策略中是否存在
+		// p_type  v0     v1       v2
+		// p	8881	/base/login	POST
 		success, _ := e.Enforce(sub, obj, act)
 		if global.GVA_CONFIG.System.Env == "develop" || success {
 			c.Next()
