@@ -31,6 +31,7 @@ func Routers() *gin.Engine {
 		router.InitInitRouter(PublicGroup) // 自动初始化相关
 	}
 	PrivateGroup := Router.Group("")
+	// 这里的Cashbin中间件用于判断该用户(角色)是否具有对应api的权限, 如:角色ID:8881 访问:/base/login 方式:POST
 	PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 	{
 		router.InitApiRouter(PrivateGroup)                   // 注册功能api路由

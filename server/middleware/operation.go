@@ -24,6 +24,7 @@ func OperationRecord() gin.HandlerFunc {
 			if err != nil {
 				global.GVA_LOG.Error("read body from request error:", zap.Any("err", err))
 			} else {
+				// 获取body
 				c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 			}
 		}
@@ -57,14 +58,15 @@ func OperationRecord() gin.HandlerFunc {
 		c.Writer = writer
 		now := time.Now()
 
-		c.Next()
+		c.Next()  //先执行控制器函数, 然后执行下面的逻辑
 
-		latency := time.Now().Sub(now)
+		latency := time.Now().Sub(now) // 延迟
 		record.ErrorMessage = c.Errors.ByType(gin.ErrorTypePrivate).String()
 		record.Status = c.Writer.Status()
 		record.Latency = latency
 		record.Resp = writer.body.String()
 
+		//  创建访问记录
 		if err := service.CreateSysOperationRecord(record); err != nil {
 			global.GVA_LOG.Error("create operation record error:", zap.Any("err", err))
 		}
